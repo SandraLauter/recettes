@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  app:
+    image: php:8.2
+    depends_on:
+      - db
+    volumes:
+      - .:/srv
+
+  nginx:
+    image: nginx:stable-alpine3.17
+    depends_on:
+      - app
+    volumes:
+      - .:/srv
+    ports:
+      - "8000:80"
+
+  db:
+    image: mariadb:10
+    environment:
+      MARIADB_ROOT_PASSWORD: pass
+      MARIADB_DATABASE: api
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  mailhog:
+    image: mailhog/mailhog
+    logging:
+      driver: "none"
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+volumes:
+  db-data: {}
